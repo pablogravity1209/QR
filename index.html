@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>VisualTalk</title>
+  </head>
+  <body>
+<div class="bg"></div>
+<div class="bg bg2"></div>
+<div class="bg bg3"></div>
+    <div class="container">
+      <p align="center" class="heading"><h1 style="color: #273746;" align="center"><em>VisualTalk</em></h1></p>
+      <div class="options">
+        <div class="anguage">
+          <p>Seleccione un idioma</p>
+          <select name="input-language" id="language"></select>
+        </div>
+      </div>
+      <div class="line"></div>
+      <button class="btn record">
+        <div class="icon">
+          <ion-icon name="mic-outline"></ion-icon>
+          <img src="bars.svg" alt="" />
+        </div>
+        <p>Hablar</p>
+      </button>
+      <p class="heading">Transcripción:</p>
+      <div
+        class="result"
+        spellcheck="false"
+        placeholder="EL texto se mostrara aqui"
+      >
+        <p class="interim"></p>
+      </div>
+      <div class="buttons">
+        <button class="btn clear">
+          <ion-icon name="trash-outline"></ion-icon>
+          <p>Limpiar</p>
+        </button>
+        <button class="btn download" disabled>
+          <ion-icon name="cloud-download-outline"></ion-icon>
+          <p>Descargar</p>
+        </button>
+      </div>
+    </div>
+
+    <!-- IONICONS -->
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"
+    ></script>
+
+    <!-- LANGUAGES -->
+    <script src="languages.js"></script>
+
+    <!-- SCRIPT -->
+    <script src="script.js"></script>
+
+
+  </body>
+</html>
