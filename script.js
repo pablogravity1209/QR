@@ -52,7 +52,7 @@ function speechToText() {
     recognition.lang = inputLanguage.value;
     recognition.interimResults = true;
     recordBtn.classList.add("recording");
-    recordBtn.querySelector("p").innerHTML = "Listening...";
+    recordBtn.querySelector("p").innerHTML = "Detectando...";
     recognition.start();
     recognition.onresult = (event) => {
       let interimTranscript = "";
