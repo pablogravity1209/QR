@@ -159,7 +159,7 @@ function download() {
   });
 
   // Guardar el PDF con el nombre "speech.pdf"
-  pdf.save("speech.pdf");
+  pdf.save("clase.pdf");
 }
 
 
