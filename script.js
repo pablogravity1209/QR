@@ -115,33 +115,6 @@ function speechToText() {
   }
 }
 
-    recognition.onend = () => {
-      // Solo reiniciamos el reconocimiento si no está en pausa
-      if (!recognition.paused) {
-        recognition.start();
-      }
-    };
-
-    recognition.onerror = (event) => {
-      stopRecording();
-      if (event.error === "no-speech") {
-        alert("Discurso no detectado. Deteniendo...");
-      } else if (event.error === "audio-capture") {
-        alert("Micorfono no encontrado en el sistema.");
-      } else if (event.error === "not-allowed") {
-        alert("El permiso del microfono fue bloqueado.");
-      } else if (event.error === "aborted") {
-        alert("Reconociemiento detenido.");
-      } else {
-        alert("Error ocurrido durante en el reconocimiento: " + event.error);
-      }
-    };
-  } catch (error) {
-    recording = false;
-    console.log(error);
-  }
-}
-
 recordBtn.addEventListener("click", () => {
   if (!recording) {
     speechToText();
