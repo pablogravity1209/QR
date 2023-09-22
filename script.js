@@ -162,6 +162,7 @@ function download() {
   pdf.save("speech.pdf");
 }
 
+
 downloadBtn.addEventListener("click", download);
 
 clearBtn.addEventListener("click", () => {
@@ -200,6 +201,7 @@ setInterval(() => {
     div.scrollTop += 500;
   }
 }, 50);
+
 
 const letra = document.getElementById("letra");
 const colorSelect = document.getElementById("color-select");
