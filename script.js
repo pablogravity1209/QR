@@ -138,32 +138,64 @@ function stripHtml(html) {
   return temporalElement.textContent.trim();
 }
 
-function download() {
-  const content = stripHtml(result.innerHTML); // Eliminamos las etiquetas HTML y los espacios en blanco
+function downloadPDF() {
+  const content = stripHtml(result.innerHTML); // Eliminamos las etiquetas HTML
 
   // Crear un objeto PDF con jsPDF
   const pdf = new jsPDF();
 
-  // Cambiar el ancho máximo a 150 unidades
-  const maxWidth = 150;
-
   // Dividir el contenido en líneas que caben en el ancho especificado
-  const splitText = pdf.splitTextToSize(content, maxWidth);
+  const splitText = pdf.splitTextToSize(content, 200);
 
   // Colocar el contenido en el PDF
-  pdf.text(splitText, 10, 15, {
-    fontSize: 12,
-    lineHeight: 1.5,
-    textAlign: "justify",
-    fitText: true
-  });
+  pdf.text(splitText, 10, 15);
 
   // Guardar el PDF con el nombre "speech.pdf"
-  pdf.save("clase.pdf");
+  pdf.save("Transcripcion.pdf");
 }
 
+function formatText(text, maxLineLength) {
+  const words = text.split(' ');
+  let lines = [];
+  let currentLine = '';
+
+  for (const word of words) {
+    if (currentLine.length + word.length + 1 <= maxLineLength) {
+      if (currentLine !== '') {
+        currentLine += ' ';
+      }
+      currentLine += word;
+    } else {
+      lines.push(currentLine);
+      currentLine = word;
+    }
+  }
+
+  if (currentLine !== '') {
+    lines.push(currentLine);
+  }
+
+  return lines.join('\n');
+}
+
+function download() {
+  const text = result.innerText;
+  const filename = "transcripcion.txt";
+  const maxLineLength = 50; // Establece el ancho máximo de línea deseado.
+
+  const formattedText = formatText(text, maxLineLength);
+
+  const element = document.createElement("a");
+  element.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(formattedText));
+  element.setAttribute("download", filename);
+  element.style.display = "none";
+  document.body.appendChild(element);
+  element.click();
+  document.body.removeChild(element);
+}
 
 downloadBtn.addEventListener("click", download);
+downloadBtn.addEventListener("click", downloadPDF);
 
 clearBtn.addEventListener("click", () => {
   result.innerHTML = "";
@@ -173,18 +205,31 @@ clearBtn.addEventListener("click", () => {
 
 // Función para pausar o reanudar el reconocimiento
 function togglePause() {
-  if (recording) {
-    if (recognition.paused) {
-      recognition.start();
-      recordBtn.querySelector("p").innerHTML = "Detectando...";
-    } else {
-      recognition.stop();
-      recordBtn.querySelector("p").innerHTML = "Discurso en Pausa";
-    }
+  if (!recording) {
+    return; // Salir si no se está grabando
+  }
+
+  if (recognition.paused) {
+    // Si la reconocimiento está pausado, reanudarlo
+    recognition.start();
+    updateButtonText("Listening...");
+  } else {
+    // Si la reconocimiento está activo, pausarlo
+    recognition.stop();
+    updateButtonText("Paused");
   }
 }
 
-// Detectar la pausa/reanudación al hacer doble clic en el botón
+// Función para actualizar el texto del botón
+function updateButtonText(text) {
+  const buttonTextElement = recordBtn.querySelector("p");
+  if (buttonTextElement) {
+    buttonTextElement.innerHTML = text;
+  }
+}
+
+
+
 recordBtn.addEventListener("dblclick", togglePause);
 
 
