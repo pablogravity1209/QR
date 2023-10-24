@@ -49,64 +49,56 @@ function processMathExpression(expression) {
 
 function speechToText() {
   try {
+    recognition = new SpeechRecognition();
     recognition.lang = inputLanguage.value;
     recognition.interimResults = true;
     recordBtn.classList.add("recording");
-    recordBtn.querySelector("p").innerHTML = "Detectando...";
+    recordBtn.querySelector("p").innerHTML = "Listening...";
     recognition.start();
     recognition.onresult = (event) => {
-      let interimTranscript = "";
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const result = event.results[i][0];
-        if (result.isFinal) {
-          const transcript = result.transcript.trim();
-          finalTranscript += " " + transcript;
-          if (isMathExpression(transcript)) {
-            finalTranscript = processMathExpression(transcript);
-          }
-        } else {
-          interimTranscript += " " + result.transcript;
-        }
-      }
+      const speechResult = event.results[0][0].transcript;
+      // Detect when interim results
+      if (event.results[0].isFinal) {
+        result.innerHTML += " " + speechResult;
+        result.querySelector("p").remove();
 
-      result.innerHTML = finalTranscript;
-      if (interimTranscript !== "") {
+        // Check if the speech result is a math expression
+        if (isMathExpression(speechResult)) {
+          const processedExpression = processMathExpression(speechResult);
+          // You can then do something with the processed math expression
+          // For example, evaluate it or display it.
+          console.log("Processed Math Expression:", processedExpression);
+          
+          // Apply style changes to the result based on user preferences
+          applyChanges();
+        }
+      } else {
+        // Creative p with class interim if not already there
         if (!document.querySelector(".interim")) {
           const interim = document.createElement("p");
           interim.classList.add("interim");
-          interim.classList.add("subtitle"); // Agregar la clase "subtitle" para aplicar los estilos
           result.appendChild(interim);
         }
-        const interimSubtitle = document.querySelector(".interim.subtitle");
-        interimSubtitle.innerHTML = interimTranscript;
-        interimSubtitle.style.color = colorSelect.value; // Aplicar color seleccionado
-        interimSubtitle.style.fontSize = sizeSelect.value + "px"; // Aplicar tamaño seleccionado
-        interimSubtitle.style.fontFamily = fontSelect.value; // Aplicar fuente seleccionada
-      } else {
-        result.querySelector(".interim.subtitle")?.remove(); // Eliminar el elemento interino si no hay texto interino
+        // Update the interim p with the speech result
+        document.querySelector(".interim").innerHTML = " " + speechResult;
       }
-
       downloadBtn.disabled = false;
     };
-
-    recognition.onend = () => {
-      // Solo reiniciamos el reconocimiento si no está en pausa
-      if (!recognition.paused) {
-        recognition.start();
-      }
+    recognition.onspeechend = () => {
+      speechToText();
     };
     recognition.onerror = (event) => {
       stopRecording();
       if (event.error === "no-speech") {
-        alert("Discurso no detectado. Deteniendo...");
+        alert("No speech was detected. Stopping...");
       } else if (event.error === "audio-capture") {
-        alert("Micorfono no encontrado en el sistema.");
+        alert("No microphone was found. Ensure that a microphone is installed.");
       } else if (event.error === "not-allowed") {
-        alert("El permiso del microfono fue bloqueado.");
+        alert("Permission to use microphone is blocked.");
       } else if (event.error === "aborted") {
-        alert("Reconociemiento detenido.");
+        alert("Listening Stopped.");
       } else {
-        alert("Error ocurrido durante en el reconocimiento: " + event.error);
+        alert("Error occurred in recognition: " + event.error);
       }
     };
   } catch (error) {
