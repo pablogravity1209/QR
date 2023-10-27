@@ -55,6 +55,7 @@ function speechToText() {
     recordBtn.classList.add("recording");
     recordBtn.querySelector("p").innerHTML = "Listening...";
     recognition.start();
+
     recognition.onresult = (event) => {
       const speechResult = event.results[0][0].transcript;
       // Detect when interim results
@@ -68,25 +69,35 @@ function speechToText() {
           // You can then do something with the processed math expression
           // For example, evaluate it or display it.
           console.log("Processed Math Expression:", processedExpression);
-          
-          // Apply style changes to the result based on user preferences
-          applyChanges();
         }
+
+        // Apply style changes to the final result element as well
+        result.style.color = colorSelect.value;
+        result.style.fontSize = sizeSelect.value + "px";
+        result.style.fontFamily = fontSelect.value;
       } else {
-        // Creative p with class interim if not already there
+        // Create a new p with class interim if not already there
         if (!document.querySelector(".interim")) {
           const interim = document.createElement("p");
           interim.classList.add("interim");
           result.appendChild(interim);
         }
         // Update the interim p with the speech result
-        document.querySelector(".interim").innerHTML = " " + speechResult;
+        const interimElement = document.querySelector(".interim");
+        interimElement.innerHTML = " " + speechResult;
+
+        // Apply style changes in real-time to the interim element
+        interimElement.style.color = colorSelect.value;
+        interimElement.style.fontSize = sizeSelect.value + "px";
+        interimElement.style.fontFamily = fontSelect.value;
       }
       downloadBtn.disabled = false;
     };
+
     recognition.onspeechend = () => {
       speechToText();
     };
+
     recognition.onerror = (event) => {
       stopRecording();
       if (event.error === "no-speech") {
@@ -106,6 +117,7 @@ function speechToText() {
     console.log(error);
   }
 }
+
 
 recordBtn.addEventListener("click", () => {
   if (!recording) {
