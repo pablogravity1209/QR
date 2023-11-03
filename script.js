@@ -53,7 +53,7 @@ function speechToText() {
     recognition.lang = inputLanguage.value;
     recognition.interimResults = true;
     recordBtn.classList.add("recording");
-    recordBtn.querySelector("p").innerHTML = "Listening...";
+    recordBtn.querySelector("p").innerHTML = "Detectando discurso...";
     recognition.start();
 
     recognition.onresult = (event) => {
@@ -101,15 +101,15 @@ function speechToText() {
     recognition.onerror = (event) => {
       stopRecording();
       if (event.error === "no-speech") {
-        alert("No speech was detected. Stopping...");
+        alert("No se ha detectado voz, deteniendo...");
       } else if (event.error === "audio-capture") {
-        alert("No microphone was found. Ensure that a microphone is installed.");
+        alert("Microfono no detectado, asegurese que cuente con un microfono.");
       } else if (event.error === "not-allowed") {
-        alert("Permission to use microphone is blocked.");
+        alert("El permiso del microfono fue denegado.");
       } else if (event.error === "aborted") {
-        alert("Listening Stopped.");
+        alert("Deteccion finalizada.");
       } else {
-        alert("Error occurred in recognition: " + event.error);
+        alert("A ocurrido un error en el reconocimiento: " + event.error);
       }
     };
   } catch (error) {
@@ -130,7 +130,7 @@ recordBtn.addEventListener("click", () => {
 
 function stopRecording() {
   recognition.stop();
-  recordBtn.querySelector("p").innerHTML = "Detectando discurso";
+  recordBtn.querySelector("p").innerHTML = "Pausa";
   recordBtn.classList.remove("recording");
   recording = false;
   // No limpiamos finalTranscript al detener el reconocimiento
@@ -216,11 +216,11 @@ function togglePause() {
   if (recognition.paused) {
     // Si la reconocimiento está pausado, reanudarlo
     recognition.start();
-    updateButtonText("Listening...");
+    updateButtonText("Detectando Discurso...");
   } else {
     // Si la reconocimiento está activo, pausarlo
-    recognition.stop();
-    updateButtonText("Paused");
+    stopRecording();
+    updateButtonText("Pausa");
   }
 }
 
