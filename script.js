@@ -142,21 +142,7 @@ function stripHtml(html) {
   return temporalElement.textContent.trim();
 }
 
-function downloadPDF() {
-  const content = stripHtml(result.innerHTML); // Eliminamos las etiquetas HTML
 
-  // Crear un objeto PDF con jsPDF
-  const pdf = new jsPDF();
-
-  // Dividir el contenido en líneas que caben en el ancho especificado
-  const splitText = pdf.splitTextToSize(content, 200);
-
-  // Colocar el contenido en el PDF
-  pdf.text(splitText, 10, 15);
-
-  // Guardar el PDF con el nombre "speech.pdf"
-  pdf.save("Transcripcion.pdf");
-}
 
 function formatText(text, maxLineLength) {
   const words = text.split(' ');
@@ -182,10 +168,62 @@ function formatText(text, maxLineLength) {
   return lines.join('\n');
 }
 
+function downloadPDF() {
+  const selectedCatedratico = document.getElementById("cated-select").value;
+  const selectedCurso = document.getElementById("curso-select").value;
+
+  // Obtener la fecha actual en el formato deseado (por ejemplo, YYYY-MM-DD)
+  const currentDate = new Date().toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).replace(/\//g, '-');
+
+  const content = `\n\nCatedrático/a: ${selectedCatedratico}\nCurso: ${selectedCurso}\n\n\n\n${stripHtml(result.innerHTML)}`;
+  const filename = `${selectedCurso}-${currentDate}.pdf`;
+
+  // Crear un objeto PDF con jsPDF
+  const pdf = new jsPDF();
+
+  // Cambiar la URL de la imagen a una URL en línea válida
+  const imageUrl = "https://3.bp.blogspot.com/-CmQKNGbexww/WXVwP14izcI/AAAAAAAABmw/3Wu3ywWhEB4pNj_pRdtJRO4BJLfcu74zgCEwYBhgL/s1600/logo%2Biapc.jpg";
+
+  // Cargar la imagen
+  const image = new Image();
+  image.src = imageUrl;
+
+  // Ajustar el tamaño de la imagen
+  image.width = 29;
+  image.height = 29;
+
+const pdfWidth = pdf.internal.pageSize.getWidth();
+
+  // Colocar la imagen en el PDF
+  pdf.addImage(image, 'JPEG', pdfWidth - 45, 10, 29, 29);
+
+  // Dividir el contenido en líneas que caben en el ancho especificado
+  const splitText = pdf.splitTextToSize(content, 200);
+
+  // Colocar el contenido en el PDF
+  pdf.text(splitText, 10, 15);
+
+  // Guardar el PDF con el nombre "speech.pdf"
+  pdf.save(filename);
+}
+
 function download() {
-  const text = result.innerText;
-  const filename = "transcripcion.txt";
-  const maxLineLength = 50; // Establece el ancho máximo de línea deseado.
+  const selectedCatedratico = document.getElementById("cated-select").value;
+  const selectedCurso = document.getElementById("curso-select").value;
+  // Obtener la fecha actual en el formato deseado (por ejemplo, YYYY-MM-DD)
+  const currentDate = new Date().toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).replace(/\//g, '-');
+
+  const text = `Catedrático/a: ${selectedCatedratico}\nCurso: ${selectedCurso}\n\n${result.innerText}`;
+  const filename = `${selectedCurso}-${currentDate}.txt`;
+  const maxLineLength = 50;
 
   const formattedText = formatText(text, maxLineLength);
 
@@ -293,4 +331,44 @@ document.addEventListener("DOMContentLoaded", function () {
   colorSelect.addEventListener("input", applyChanges);
   sizeSelect.addEventListener("input", applyChanges);
   fontSelect.addEventListener("input", applyChanges);
+});
+
+
+// Define una estructura de datos que mapea profesores a cursos
+const profesoresCursos = {
+  Tania: ["Psicología", "Historia de la educación" , "Filosofía"],
+  Pablo: ["Desarrollo Web" , "Base de Datos" , "Redes de computadoras"]
+};
+
+// Obtén una referencia al elemento select de profesores
+const profesorSelect = document.getElementById("cated-select");
+// Obtén una referencia al elemento select de cursos
+const cursoSelect = document.getElementById("curso-select");
+
+// Función para cargar las opciones de cursos basadas en el profesor seleccionado
+function cargarCursosPorProfesor(profesor) {
+  // Limpia las opciones anteriores del select de cursos
+  cursoSelect.innerHTML = "";
+
+  if (profesor in profesoresCursos) {
+    // Agrega las opciones de cursos para el profesor seleccionado
+    const cursos = profesoresCursos[profesor];
+    cursos.forEach((curso) => {
+      const option = document.createElement("option");
+      option.value = curso;
+      option.text = curso;
+      cursoSelect.appendChild(option);
+    });
+  }
+}
+
+// Agrega un evento change al select de profesores
+profesorSelect.addEventListener("change", function () {
+  const selectedProfesor = profesorSelect.value;
+  cargarCursosPorProfesor(selectedProfesor);
+});
+
+// Llama a la función para cargar las opciones de cursos basadas en el profesor seleccionado al cargar la página
+document.addEventListener("DOMContentLoaded", function () {
+  cargarCursosPorProfesor(profesorSelect.value);
 });
