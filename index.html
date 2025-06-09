@@ -20,6 +20,7 @@
     <input type="text" id="dpi" placeholder="DPI" required />
     <input type="tel" id="telefono" placeholder="Teléfono" required />
     <button onclick="generarQR()">Generar QR</button>
+    <button onclick="limpiarCampos()">Limpiar campos</button>
     <div id="qrcode"></div>
   </div>
 
@@ -47,6 +48,14 @@
         if (err) return console.error(err);
         qrDiv.appendChild(canvas);
       });
+    }
+
+    function limpiarCampos() {
+      document.getElementById('nombre').value = '';
+      document.getElementById('correo').value = '';
+      document.getElementById('dpi').value = '';
+      document.getElementById('telefono').value = '';
+      document.getElementById('qrcode').innerHTML = '';
     }
 
     function mostrarDatosDesdeURL() {
