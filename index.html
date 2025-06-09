@@ -1,111 +1,68 @@
+
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
-	<link rel="icon" href="iapc.ico" type="image/x-icon">
-    <title>VisualTalk</title>
-	  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
-  </head>
-  <body>
-<div class="bg"></div>
-<div class="bg bg2"></div>
-<div class="bg bg3"></div>
-    <div class="container">
-      <p align="center" class="heading"><h1 style="color: #273746;" align="center"><em>VisualTalk</em></h1></p>
-      <div class="options">
-        <div class="anguage">
-          <p>Seleccione un idioma</p>
-          <select name="input-language" id="language"></select>
-          	  <br>
-  	<p>Color</p>
-       <select id="color-select" class="select-container">
-        <option value="red">Rojo</option>
-        <option value="blue">Azul</option>
-        <option value="green">Verde</option>
-        <option value="purple">Morado</option>
-        <option value="orange">Naranja</option>
-        <option value="black">Negro</option>
-        <option value="gray">Gris</option>
-    </select>
-	<br>
-<p>Tamaño</p>
-    <select id="size-select" class="select-container">
-        <option value="28">28</option>
-        <option value="32">32</option>
-	<option value="36">36</option>
-    </select>
-	<br>
-<p>Fuente</p>
-    <select id="font-select" class="select-container">
-        <option value="Arial">Arial</option>
-        <option value="Helvetica">Helvetica</option>
-        <option value="Times New Roman">Times New Roman</option>
-        <option value="Courier New">Courier New</option>
-        <option value="Verdana">Verdana</option>
-        <option value="Georgia">Georgia</option>
-        <option value="Impact">Impact</option>
-    </select>
-	<br>
-	<p>Catedrático/a</p>
-    <select id="cated-select" class="select-container">
-        <option value="Tania">Tania</option>
-        <option value="Pablo">Pablo</option>
-    </select>
-	<p>Curso</p>
-    <select id="curso-select" class="select-container">
-        <option value="Psicologia">Psicologia</option>
-        <option value="Desarrollo Web">Desarrollo Web</option>
-	<option value="Sociales">Sociales</option>
-    </select>
-        </div>
-      </div>
-      <div class="line"></div>
-      <button class="btn record">
-        <div class="icon">
-          <ion-icon name="mic-outline"></ion-icon>
-          <img src="bars.svg" alt="" />
-        </div>
-        <p>Iniciar Reconocimiento</p>
-      </button>
-      <p class="heading">Transcripción:</p>
-      <div
-        class="result"
-        spellcheck="false"
-        placeholder="EL texto se mostrara aqui"
-      >
-        <p id="letra" class="interim">-Vista previa de los subtítulos-</p>
-      </div>
-      <div class="buttons">
-        <button class="btn clear">
-          <ion-icon name="trash-outline"></ion-icon>
-          <p>Limpiar</p>
-        </button>
-        <button class="btn download" disabled>
-          <ion-icon name="cloud-download-outline"></ion-icon>
-          <p>Descargar</p>
-        </button>
-      </div>
-    </div>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Formulario con QR</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    input, button { display: block; margin: 10px 0; padding: 8px; width: 300px; }
+    #qrcode, #datos { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <div id="formulario">
+    <h2>Ingrese sus datos</h2>
+    <input type="text" id="nombre" placeholder="Nombre completo" required />
+    <input type="email" id="correo" placeholder="Correo electrónico" required />
+    <input type="text" id="dpi" placeholder="DPI" required />
+    <input type="tel" id="telefono" placeholder="Teléfono" required />
+    <button onclick="generarQR()">Generar QR</button>
+    <div id="qrcode"></div>
+  </div>
 
-    <!-- IONICONS -->
-    <script
-      type="module"
-      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"
-    ></script>
-    <script
-      nomodule
-      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"
-    ></script>
+  <div id="datos" style="display:none;">
+    <h2>Datos Ingresados</h2>
+    <div><strong>Nombre completo:</strong> <span id="dato-nombre"></span></div>
+    <div><strong>Correo:</strong> <span id="dato-correo"></span></div>
+    <div><strong>DPI:</strong> <span id="dato-dpi"></span></div>
+    <div><strong>Teléfono:</strong> <span id="dato-telefono"></span></div>
+  </div>
 
-    <!-- LANGUAGES -->
-    <script src="languages.js"></script>
+  <script>
+    function generarQR() {
+      const nombre = encodeURIComponent(document.getElementById('nombre').value);
+      const correo = encodeURIComponent(document.getElementById('correo').value);
+      const dpi = encodeURIComponent(document.getElementById('dpi').value);
+      const telefono = encodeURIComponent(document.getElementById('telefono').value);
 
-    <!-- SCRIPT -->
-    <script src="script.js"></script>
+      const base = window.location.href.split('?')[0];
+      const url = `${base}?mostrar=1&nombre=${nombre}&correo=${correo}&dpi=${dpi}&telefono=${telefono}`;
 
+      QRCode.toCanvas(url, function (err, canvas) {
+        const qrDiv = document.getElementById('qrcode');
+        qrDiv.innerHTML = '';
+        if (err) return console.error(err);
+        qrDiv.appendChild(canvas);
+      });
+    }
 
-  </body>
+    function mostrarDatosDesdeURL() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('mostrar') === '1') {
+        document.getElementById('formulario').style.display = 'none';
+        document.getElementById('datos').style.display = 'block';
+
+        document.getElementById('dato-nombre').textContent = params.get('nombre') || '';
+        document.getElementById('dato-correo').textContent = params.get('correo') || '';
+        document.getElementById('dato-dpi').textContent = params.get('dpi') || '';
+        document.getElementById('dato-telefono').textContent = params.get('telefono') || '';
+      }
+    }
+
+    window.onload = mostrarDatosDesdeURL;
+  </script>
+</body>
 </html>
