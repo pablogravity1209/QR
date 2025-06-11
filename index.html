@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -7,40 +6,68 @@
   <title>Formulario con QR</title>
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
   <style>
-    body { font-family: sans-serif; padding: 20px; }
-    input, button { display: block; margin: 10px 0; padding: 8px; width: 300px; }
-    #qrcode, #datos { margin-top: 20px; }
+    body { 
+      font-family: sans-serif; 
+      padding: 20px; 
+      margin: 0;
+      position: relative;
+    }
+    input, button { 
+      display: block; 
+      margin: 10px 0; 
+      padding: 8px; 
+      width: 300px; 
+    }
+    #qrcode, #datos { 
+      margin-top: 20px; 
+    }
+    #datos {
+      text-align: center;
+    }
+    #leyenda {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    #logo {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 60px;
+      height: auto;
+    }
   </style>
 </head>
 <body>
+  <!-- Imagen en la esquina superior izquierda -->
+  <img id="logo" src="https://via.placeholder.com/60" alt="Logo" />
+
   <div id="formulario">
     <h2>Ingrese sus datos</h2>
     <input type="text" id="nombre" placeholder="Nombre completo" required />
-    <input type="email" id="correo" placeholder="Correo electrónico" required />
-    <input type="text" id="dpi" placeholder="DPI" required />
-    <input type="tel" id="telefono" placeholder="Teléfono" required />
+    <input type="text" id="puesto" placeholder="Puesto" required />
+    <input type="text" id="certificado" placeholder="Certificado" required />
     <button onclick="generarQR()">Generar QR</button>
     <button onclick="limpiarCampos()">Limpiar campos</button>
     <div id="qrcode"></div>
   </div>
 
   <div id="datos" style="display:none;">
+    <div id="leyenda">Texto insertar leyenda adicional</div>
     <h2>Datos Ingresados</h2>
     <div><strong>Nombre completo:</strong> <span id="dato-nombre"></span></div>
-    <div><strong>Correo:</strong> <span id="dato-correo"></span></div>
-    <div><strong>DPI:</strong> <span id="dato-dpi"></span></div>
-    <div><strong>Teléfono:</strong> <span id="dato-telefono"></span></div>
+    <div><strong>Puesto:</strong> <span id="dato-puesto"></span></div>
+    <div><strong>Certificado:</strong> <span id="dato-certificado"></span></div>
   </div>
 
   <script>
     function generarQR() {
       const nombre = encodeURIComponent(document.getElementById('nombre').value);
-      const correo = encodeURIComponent(document.getElementById('correo').value);
-      const dpi = encodeURIComponent(document.getElementById('dpi').value);
-      const telefono = encodeURIComponent(document.getElementById('telefono').value);
+      const puesto = encodeURIComponent(document.getElementById('puesto').value);
+      const certificado = encodeURIComponent(document.getElementById('certificado').value);
 
       const base = window.location.href.split('?')[0];
-      const url = `${base}?mostrar=1&nombre=${nombre}&correo=${correo}&dpi=${dpi}&telefono=${telefono}`;
+      const url = `${base}?mostrar=1&nombre=${nombre}&puesto=${puesto}&certificado=${certificado}`;
 
       QRCode.toCanvas(url, function (err, canvas) {
         const qrDiv = document.getElementById('qrcode');
@@ -52,9 +79,8 @@
 
     function limpiarCampos() {
       document.getElementById('nombre').value = '';
-      document.getElementById('correo').value = '';
-      document.getElementById('dpi').value = '';
-      document.getElementById('telefono').value = '';
+      document.getElementById('puesto').value = '';
+      document.getElementById('certificado').value = '';
       document.getElementById('qrcode').innerHTML = '';
     }
 
@@ -65,9 +91,8 @@
         document.getElementById('datos').style.display = 'block';
 
         document.getElementById('dato-nombre').textContent = params.get('nombre') || '';
-        document.getElementById('dato-correo').textContent = params.get('correo') || '';
-        document.getElementById('dato-dpi').textContent = params.get('dpi') || '';
-        document.getElementById('dato-telefono').textContent = params.get('telefono') || '';
+        document.getElementById('dato-puesto').textContent = params.get('puesto') || '';
+        document.getElementById('dato-certificado').textContent = params.get('certificado') || '';
       }
     }
 
@@ -75,5 +100,3 @@
   </script>
 </body>
 </html>
-
-
